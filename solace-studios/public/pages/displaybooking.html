@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Booking Confirmation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+JP:wght@100..900&family=Noto+Serif+JP:wght@200..900&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/displaybooking.css">
+</head>
+<body>
+    <div class="confirmation-container">
+        <h1 class="main-heading">Thank you for your Booking!</h1>
+        <p class="intro-message">Your session details are confirmed below. We look forward to capturing your memories!</p>
+
+        <div class="booking-details-grid">
+            <div class="detail-item">
+                <span class="detail-label">Name:</span>
+                <span class="detail-value" id="name"></span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Email:</span>
+                <span class="detail-value" id="email"></span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Event Type:</span>
+                <span class="detail-value" id="eventType"></span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Event Date:</span>
+                <span class="detail-value" id="eventDate"></span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Location:</span>
+                <span class="detail-value" id="loc"></span>
+            </div>
+        </div>
+
+        <button class="return-home-btn" onclick="window.location.href='../index.html'">Return to Home</button>
+    </div>
+
+    <script>
+        const booking = JSON.parse(sessionStorage.getItem("bookingConfirmation") || "null");
+        if (!booking) {
+            window.location.replace("book.html");
+        } else {
+            document.getElementById("name").textContent = booking.name || "";
+            document.getElementById("email").textContent = booking.email || "";
+            document.getElementById("eventType").textContent = booking.eventType || "";
+            document.getElementById("eventDate").textContent = booking.eventDate
+                ? new Date(booking.eventDate).toLocaleString()
+                : "";
+            document.getElementById("loc").textContent = booking.location || "";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+    display: block; /* Revert to block display for body, main content will be centered */
+    padding: 0; /* Adjusted padding to be handled by content areas */
+    margin: 0;
+    font-family: "Noto Serif JP", serif;
+    font-optical-sizing: auto;
+    font-weight: 400; /* Normal weight was 400 in previous Noto Serif JP */
+    font-style: normal;
+    background: #fffdf4;
+    color: #333;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+    min-height: 100vh;
+    box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px 40px;
+    z-index: 1000;
+    opacity: 0.98;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-logo {
+    height: 50px;
+    width: auto;
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 90px;
+    margin: 0;
+    padding: 0;
+    flex-grow: 1;
+    justify-content: center;
+    margin-right: 290px;
+    flex-wrap: nowrap;
+    min-width: 0;
+}
+
+.navbar ul li {
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.navbar ul li a {
+    color: #0a2b69;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 0;
+    transition: color 0.3s ease, transform 0.2s ease;
+    position: relative;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+}
+
+.navbar ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    display: block;
+    margin-top: 5px;
+    right: 0;
+    background: #243a88;
+    transition: width 0.3s ease;
+}
+
+.navbar ul li a:hover::after {
+    width: 100%;
+    left: 0;
+    background: #243a88;
+}
+
+.navbar ul li a.active::after {
+    width: 100%; /* shows underline if the tab is active */
+    background-color: #243a88;
+  }
+
+.navbar ul li a:hover {
+    color: #243a88;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        padding: 15px 20px;
+        align-items: center;
+    }
+
+    .navbar-logo {
+        margin-bottom: 15px;
+        margin-right: 0;
+        height: 40px;
+    }
+
+    .navbar ul {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px 20px;
+        width: 100%;
+        flex-grow: 0;
+    }
+
+    .navbar ul li a {
+        font-size: 14px;
+        padding: 6px 8px;
+        white-space: normal;
+        text-align: center;
+    }
+}
+
+/* --- Booking Section Layout --- */
+.booking-section {
+    display: flex;
+    flex-wrap: wrap; /* Allows items to wrap to the next line on smaller screens */
+    justify-content: center; /* Center items horizontally */
+    align-items: flex-start; /* Align items to the top */
+    gap: 40px; /* Space between the form and the image */
+    max-width: 1200px; /* Max width for the entire section */
+    margin: 120px auto 40px auto; /* Push down from navbar, center horizontally */
+    padding: 20px; 
+    min-height: 100vh;
+
+}
+
+.booking-form-wrapper { /* Formerly .container */
+    flex: 1; /* Allows the form to grow and shrink */
+    min-width: 300px; /* Minimum width before wrapping */
+    max-width: 600px; /* Max width for the form */
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+    font-family: "Noto Serif JP", serif; /* Use Noto Serif JP for consistency */
+    color: #333;
+}
+
+
+.booking-form-wrapper h2 {
+    text-align: center;
+    color: #0a2b69;
+    margin-bottom: 30px;
+ font-family: "Pinyon Script", cursive;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 50px;
+}
+
+.booking-form-wrapper form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between form elements */
+}
+
+.booking-form-wrapper label {
+    display: block; /* Ensures label is on its own line */
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+    font-size: 1.05em;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="datetime-local"] {
+    width: 100%; /* Full width of its parent */
+    padding: 12px 15px; /* Adjusted padding for better input feel */
+    margin: 0; /* Remove default margin from input */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    background-color: #f9f9f9; /* Light background for inputs */
+    border: 2px solid #2369cd; /* Consistent border color */
+    border-radius: 8px; /* Consistent border-radius */
+    font-family: "Noto Serif JP", serif;
+    font-size: 1em;
+    color: #333;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="datetime-local"]:focus {
+    outline: none;
+    border-color: #1a5bb0;
+    box-shadow: 0 0 0 3px rgba(35, 105, 205, 0.2);
+}
+
+.submit-btn { /* Style for the BOOK NOW button */
+    background-color: #2369cd;
+    color: white;
+    padding: 14px 30px;
+    font-size: 1.1em;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    font-family: "Noto Serif JP", serif;
+    font-weight: 500;
+    font-style: normal;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    margin-top: 20px;
+    width: fit-content; /* Adjust width to content */
+    align-self: center; /* Center button within the form */
+}
+
+.submit-btn:hover {
+    background-color: #1a5bb0;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.booking-image { /* Formerly .photosample */
+    flex: 1; /* Allows the image section to grow and shrink */
+    min-width: 300px; /* Minimum width before wrapping */
+    max-width: 500px; /* Max width for the image */
+    padding: 20px; /* Padding inside the image container */
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+    display: flex; /* Use flex to center the image */
+    justify-content: center;
+    align-items: center;
+}
+
+.booking-image img {
+    max-width: 100%; /* Ensure image scales down */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Responsive Design Adjustments --- */
+@media (max-width: 900px) {
+    .booking-section {
+        flex-direction: column; /* Stack form and image vertically */
+        align-items: center; /* Center items when stacked */
+        gap: 30px;
+        padding: 15px;
+        margin-top: 100px; /* Adjust top margin for smaller navbar */
+    }
+
+    .booking-form-wrapper,
+    .booking-image {
+        max-width: 90%; /* Take more width on smaller screens */
+        min-width: auto; /* Allow shrinking */
+        width: 100%;
+    }
+
+    .booking-form-wrapper {
+        padding: 25px;
+    }
+
+    .booking-form-wrapper h2 {
+        font-size: 1.8em;
+        margin-bottom: 25px;
+    }
+
+    .submit-btn {
+        padding: 12px 25px;
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 600px) {
+    .booking-section {
+        padding: 10px;
+        gap: 20px;
+    }
+
+    .booking-form-wrapper {
+        padding: 20px;
+    }
+
+    .booking-form-wrapper h2 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="datetime-local"] {
+        padding: 10px 12px;
+        font-size: 0.95em;
+    }
+}
+
+@media (max-width: 480px) {
+    .booking-section {
+        margin-top: 80px; /* Even less margin for very small screens */
+    }
+
+    .booking-form-wrapper {
+        padding: 15px;
+    }
+
+    .booking-form-wrapper h2 {
+        font-size: 1.3em;
+    }
+
+    .booking-form-wrapper label {
+        font-size: 0.9em;
+    }
+
+    .submit-btn {
+        width: 100%; /* Full width button on very small screens */
+        max-width: 250px;
+        align-self: center;
+    }
+}
+
+.footer {
+    width: 100%;
+    background-color: #0a2b69;
+    color: #ffffff;
+    text-align: center;
+    padding: 20px 10px;
+    font-size: 10px;
+    border-top: 3px solid #243a88;
+    margin-top: 80px;
+    }
+
+    .footer-content {
+    margin: 0 auto;
+    }
+
+    .footer a {
+    color: #ffffff;
+    text-decoration: underline;
+    margin: 0 5px;
+    }
+
+    .footer a:hover {
+    color: #ffc107;
+    text-decoration: none;
+    }

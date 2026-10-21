@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&family=Noto+Serif+JP:wght@200..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+</head>
+  <title>Solace Studios | Photo Booth Web</title>
+  <link rel="stylesheet" href="../assets/css/photobooth.css">
+</head>
+<body>
+  <nav class="navbar">
+    <img src="../assets/images/FINALlabel.svg" alt="SOLACE STUDIO label" class="navbar-logo"> 
+    <ul>
+        <li><a href="../index.html">HOME</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="book.html">BOOK NOW</a></li>
+    </ul>
+</nav>
+
+
+  <div class="container">
+    <div class="media-container"> 
+      <div class = "video-wrapper">
+        <video autoplay id="video"></video>
+           <div id="camera-denied-msg" class="camera-error" style="display: none;">
+           Camera access denied. Please enable it to use the photobooth.
+        </div>
+        <div id = "countdown-overlay">3</div>
+      </div>
+      <div class="captured-wrapper">
+        <div id="photos" class="captured-column"></div>
+        <p id="retake-hint" class="retake-hint">Click a photo to retake it</p>
+      </div>
+
+      <div class="filter-controls">
+          <h3>  Filter Style  </h3>
+          <div class="filter-options">
+              <span class="filter-circle active" data-filter="none" style="background-color: #eee;" title="No Filter"></span>
+              <span class="filter-circle" data-filter="bw" style="background-color: #333;" title="Black and White"></span>
+              <span class="filter-circle" data-filter="sepia" style="background-color: #C19A6B;" title="Sepia"></span>
+              <span class="filter-circle" data-filter="invert" style="background-color: #888;" title="Invert"></span>
+              <span class="filter-circle" data-filter="contrast" style="background-color: #666;" title="High Contrast"></span>
+              <span class="filter-circle" data-filter="saturate" style="background-color: #f00;" title="Saturate"></span>
+              <span class="filter-circle" data-filter="hue-rotate" style="background-color: #0f0;" title="Hue Rotate"></span>
+          </div>
+      </div>
+      </div>
+
+    <canvas id="canvas" style="display: none;"></canvas>
+
+    <div class="capture-controls">
+      <div class="timer">
+        <button class="dropbtn" id="dropdownButton">3 Seconds</button>
+        <div id="dropdwn" class="dropdown-content"> 
+          <p onclick="changeText('3 Seconds')">3 Seconds</p>
+          <p onclick="changeText('5 Seconds')">5 Seconds</p>
+          <p onclick="changeText('10 Seconds')">10 Seconds</p>
+        </div>
+      </div>
+      <button id="capture-btn">Start Capture</button>
+      <button id = "next-btn" disabled>Next</button>
+    </div>
+  </div>
+
+   <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Solace Studios. All rights reserved.</p>
+            <p>
+            <a href="mailto:solacestudios@gmail.com">Contact Us</a> |
+            <a href="privpolicy.html">Privacy Policy</a>
+            </p>    
+        </div>
+    </footer>
+
+  <script>
+    const video = document.getElementById("video");
+    const captureBtn = document.getElementById("capture-btn");
+    const dropdownBtn = document.getElementById("dropdownButton");
+    const dropdwn = document.getElementById("dropdwn");
+    const photosContainer = document.getElementById("photos");
+    const nextBtn = document.getElementById("next-btn");
+    
+    const filterCircles = document.querySelectorAll(".filter-circle");
+    let currentFilter = "none"; 
+
+    nextBtn.disabled = true;
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        const video = document.getElementById('video');
+        video.srcObject = stream;
+        document.getElementById('camera-denied-msg').style.display = 'none';
+        captureBtn.disabled = false; 
+      })
+      .catch(error => {
+        console.error("Camera access denied or not available", error);
+        document.getElementById('camera-denied-msg').style.display = 'block';
+        captureBtn.disabled = true; 
+        captureBtn.style.color = "#a2b7d6";
+    });
+
+    filterCircles.forEach(circle => {
+        circle.addEventListener("click", () => {
+            filterCircles.forEach(c => c.classList.remove("active"));
+            circle.classList.add("active");
+            currentFilter = circle.dataset.filter;
+            video.style.filter = getComputedFilter(currentFilter);
+        });
+    });
+
+    function changeText(text) {
+      dropdownBtn.textContent = text;
+      dropdwn.classList.remove("show");
+    }
+
+    dropdownBtn.addEventListener("click", () => {
+      dropdwn.classList.toggle("show");
+    });
+
+    window.addEventListener("click", (event) => {
+      if (!event.target.matches('.dropbtn') && !event.target.closest('.filter-controls')) {
+        dropdwn.classList.remove("show");
+      }
+    });
+
+    captureBtn.addEventListener("click", async () => {
+      const seconds = parseInt(dropdownBtn.textContent) || 3;
+      const maxPhotos = 4;
+
+      if (photosContainer.childElementCount >= maxPhotos) {
+        photosContainer.innerHTML = "";
+        nextBtn.disabled = true;
+        nextBtn.style.color = "#a2b7d6";
+      }
+
+      sessionStorage.removeItem('capturedPhotos');
+
+      photosContainer.classList.remove("retakable");
+
+      document.getElementById("retake-hint").classList.remove("show-hint");
+
+      captureBtn.disabled = true;
+      nextBtn.style.color = "#a2b7d6";
+
+      for (let i = 0; i < maxPhotos; i++) {
+        await runCountdown(seconds);
+        capturePhoto();
+        if (i < maxPhotos - 1) await delay(1000);
+      }
+
+      captureBtn.disabled = false;
+      nextBtn.style.color = "#2369cd";
+      captureBtn.textContent = "Start Capture";
+
+      nextBtn.disabled = false;
+      nextBtn.style.color = "#2369cd";
+      nextBtn.style.display = "inline-block";
+
+      photosContainer.classList.add("retakable");
+
+      document.getElementById("retake-hint").classList.add("show-hint");
+      
+    });
+
+    nextBtn.addEventListener("click", () => {
+      const photos = JSON.parse(sessionStorage.getItem('capturedPhotos')) || [];
+      if (photos.length === 4) {
+        window.location.href = "result.html";
+      } else {
+        alert("Please capture all 4 photos first.");
+      }
+    });
+
+        photosContainer.addEventListener("click", async (event) => {
+      const img = event.target.closest("img");
+      if (!img || !photosContainer.classList.contains("retakable")) return;
+
+      const index = Array.from(photosContainer.querySelectorAll("img")).indexOf(img);
+      if (index === -1) return;
+
+      const seconds = parseInt(dropdownBtn.textContent) || 3;
+
+      photosContainer.classList.remove("retakable");
+      document.getElementById("retake-hint").classList.remove("show-hint");
+      captureBtn.disabled = true;
+      nextBtn.disabled = true;
+
+      await runCountdown(seconds);
+      capturePhoto(index);
+
+      captureBtn.textContent = "Start Capture";
+      captureBtn.disabled = false;
+      nextBtn.disabled = false;
+      photosContainer.classList.add("retakable");
+
+      document.getElementById("retake-hint").classList.add("show-hint");
+    });
+
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function runCountdown(seconds) {
+      return new Promise((resolve) => {
+        const overlay = document.getElementById("countdown-overlay");
+        let countdown = seconds;
+        
+        overlay.textContent = countdown;
+        overlay.style.display = "block";
+        captureBtn.textContent = `Capturing (${countdown})`;
+
+        const interval = setInterval(() => {
+          countdown--;
+          if (countdown > 0) {
+            overlay.textContent = countdown;
+            captureBtn.textContent = `Capturing (${countdown})`;
+          } else {
+            clearInterval(interval);
+            overlay.style.display = "none";
+            resolve();
+          }
+        }, 1000);
+      });
+    }
+
+    function getComputedFilter(filterType) {
+        switch (filterType) {
+            case 'bw': return 'grayscale(100%)';
+            case 'sepia': return 'sepia(100%)';
+            case 'invert': return 'invert(100%)';
+            case 'contrast': return 'contrast(200%)';
+            case 'saturate': return 'saturate(200%)';
+            case 'hue-rotate': return 'hue-rotate(90deg)'; 
+            case 'none':
+            default: return 'none';
+        }
+    }
+
+    function capturePhoto(index) {
+      console.log("capturePhoto() called");
+
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+      const selectedFilter = currentFilter; 
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      context.save();
+      context.translate(canvas.width, 0);
+      context.scale(-1, 1); 
+      
+      context.filter = getComputedFilter(selectedFilter);
+
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      context.restore();
+
+      const imageData = canvas.toDataURL('image/jpeg', 0.6);
+
+      let capturedPhotos = JSON.parse(sessionStorage.getItem('capturedPhotos')) || [];
+
+            if (typeof index === "number") {
+        capturedPhotos[index] = imageData;
+        sessionStorage.setItem('capturedPhotos', JSON.stringify(capturedPhotos));
+        const imgs = photosContainer.querySelectorAll("img");
+        if (imgs[index]) imgs[index].src = imageData;
+        return;
+      }
+
+      if (capturedPhotos.length >= 4) {
+        capturedPhotos.shift(); 
+      }
+
+      capturedPhotos.push(imageData);
+      sessionStorage.setItem('capturedPhotos', JSON.stringify(capturedPhotos));
+
+      console.log("Captured so far:", capturedPhotos.length); 
+
+      const img = document.createElement('img');
+      img.src = imageData;
+      document.getElementById('photos').appendChild(img);
+    }
+  </script>
+</body>
+</html>

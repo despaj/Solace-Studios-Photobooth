@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+JP:wght@100..900&family=Noto+Serif+JP:wght@200..900&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <title>Solace Studios | Book Now</title>
+    <link rel="stylesheet" href="../assets/css/book.css">
+</head>
+<body>
+    <nav class="navbar">
+        <img src="../assets/images/FINALlabel.svg" alt="SOLACE STUDIO label" class="navbar-logo">
+        <ul>
+            <li><a href="../index.html">HOME</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="book.html">BOOK NOW</a></li>
+        </ul>
+    </nav>
+
+    <div class="booking-section">
+        <div class="booking-form-wrapper">
+            <h2>Book your Session</h2>
+            <form id="bookingForm">
+                <label for="name">Full name:</label>
+                <input type="text" id="name" name="name" autocomplete="name" required>
+
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" autocomplete="email" required>
+
+                <label for="eventType">Event Type:</label>
+                <input type="text" id="eventType" name="eventType" required>
+
+                <label for="eventDate">Event Date:</label>
+                <input type="datetime-local" id="eventDate" name="eventDate" required>
+
+                <label for="loc">Event Location:</label>
+                <input type="text" id="loc" name="location" required>
+
+                <button type="submit" class="submit-btn">BOOK NOW</button>
+            </form>
+        </div>
+
+        <div class="booking-image">
+            <img src="../assets/images/sample.svg" alt="photobooth sample">
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Solace Studios. All rights reserved.</p>
+            <p>
+            <a href="mailto:solacestudios@gmail.com">Contact Us</a> |
+            <a href="privpolicy.html">Privacy Policy</a>
+            </p>    
+        </div>
+    </footer>
+
+    <script>
+        const bookingForm = document.getElementById("bookingForm");
+        const submitButton = bookingForm.querySelector('button[type="submit"]');
+
+        bookingForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const booking = {
+                name: document.getElementById("name").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                eventType: document.getElementById("eventType").value.trim(),
+                eventDate: document.getElementById("eventDate").value,
+                location: document.getElementById("loc").value.trim()
+            };
+
+            if (!booking.name || !booking.email || !booking.eventType || !booking.eventDate || !booking.location) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            submitButton.disabled = true;
+            const originalText = submitButton.textContent;
+            submitButton.textContent = "SUBMITTING...";
+
+            try {
+                const response = await fetch("/api/bookings", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(booking)
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || "Unable to submit booking.");
+
+                sessionStorage.setItem("bookingConfirmation", JSON.stringify({
+                    ...booking,
+                    bookingId: result.booking?.id || null
+                }));
+                window.location.href = "displaybooking.html";
+            } catch (error) {
+                alert(error.message || "Booking failed. Please try again.");
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const currentPage = window.location.pathname.split("/").pop();
+            document.querySelectorAll('.navbar ul li a').forEach(link => {
+                if (link.getAttribute("href") === currentPage) link.classList.add("active");
+            });
+        });
+    </script>
+
+</body>
+</html>

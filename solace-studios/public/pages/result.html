@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+JP:wght@100..900&family=Noto+Serif+JP:wght@200..900&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <title>Solace Studios | Photo Booth Web</title>
+    <link rel="stylesheet" href="../assets/css/result.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+      <img src="../assets/images/FINALlabel.svg" alt="SOLACE STUDIO label" class="navbar-logo"> 
+      <ul>
+          <li><a href="../index.html">HOME</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="book.html">BOOK NOW</a></li>
+      </ul>
+    </nav>
+    
+    <div class = "prev">
+        <p>Photo Strip Preview</p>
+    </div>
+    <div class = "strip-container">
+      <div class = "photo-strip" id = "photoStrip"></div>
+
+      <div class = "btns animated-item" >
+        <button class = "downloadBtn" onclick="downloadStrip()">Download</button>
+        <button class = "retakeBtn" onclick="window.location.href='photobooth.html'">Retake</button>
+      </div>
+        
+        <div class = "color-buttons"> 
+          <div class = "text-label">Frame Colors</div>
+
+          <div class = "solid-colors">
+            <button class = "white" onclick="setTheme('theme1')"></button>
+            <button class = "black" onclick="setTheme('theme2')"></button>
+            <button class = "pink" onclick="setTheme('theme3')"></button>
+            <button class = "blue" onclick="setTheme('theme4')"></button>
+            <button class = "green" onclick="setTheme('theme5')"></button>
+            <button class = "yellow" onclick="setTheme('theme6')"></button>
+          </div>
+
+          <div class = "gradient-colors">
+            <button class = "green-blue" onclick="setTheme('theme7')"></button>
+            <button class = "matcha" onclick="setTheme('theme8')"></button>
+            <button class = "red-black" onclick="setTheme('theme9')"></button>
+            <button class = "purple-yellow" onclick="setTheme('theme10')"></button>
+            <button class = "yellow-orange" onclick="setTheme('theme11')"></button>
+            <button class = "grd-pink" onclick="setTheme('theme15')"></button>
+          </div>
+
+          <div class = "frame-designs">
+            <button class = "ribbon" onclick="setTheme('theme12')"></button>
+            <button class = "pinkdes" onclick="setTheme('theme13')"></button>
+            <button class = "cloud" onclick="setTheme('theme14')"></button>
+          </div>
+        
+         </div>
+    </div>
+
+     <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Solace Studios. All rights reserved.</p>
+            <p>
+            <a href="mailto:solacestudios@gmail.com">Contact Us</a> |
+            <a href="privpolicy.html">Privacy Policy</a>
+            </p>    
+        </div>
+    </footer>
+
+  <script>
+
+      const photoStrip = document.getElementById('photoStrip');
+      const photos = JSON.parse(sessionStorage.getItem('capturedPhotos')) || [];
+
+      console.log("Loaded photos:", photos);
+
+      photos.forEach(src => {
+          const img = document.createElement('img');
+          img.src = src;
+          photoStrip.appendChild(img);
+  });
+
+      function setTheme(themeName) {
+        const strip = document.getElementById("photoStrip");
+        const allThemes = ['theme1', 'theme2', 'theme3', 'theme4', 'theme5', 
+        'theme6', 'theme7', 'theme8', 'theme9', 'theme10', 'theme11', 'theme12', 
+        'theme13', 'theme14', 'theme15'];
+
+        allThemes.forEach(theme => strip.classList.remove(theme));
+
+        strip.classList.add(themeName);
+      }
+
+      function downloadStrip() {
+        const strip = document.querySelector('.photo-strip');
+
+        const originalBorder = strip.style.border;
+        const originalBoxShadow = strip.style.boxShadow;
+
+        strip.style.border = 'none';
+        strip.style.boxShadow = 'none';
+
+        html2canvas(strip).then(canvas => {
+          const link = document.createElement('a');
+          link.download = 'photo-strip.png';
+          link.href = canvas.toDataURL();
+          link.click();
+
+          strip.style.border = originalBorder;
+          strip.style.boxShadow = originalBoxShadow;
+        }); 
+
+      }
+
+      document.addEventListener("DOMContentLoaded", function() {
+            const animatedElements = document.querySelectorAll('.animated-item');
+            animatedElements.forEach((element, index) => {
+                element.style.animationDelay = `${0.2 + index * 0.3}s`;
+                element.classList.add('fade-in-slide-up');
+            });
+        });
+
+  </script>
+
+</body>
+</html>

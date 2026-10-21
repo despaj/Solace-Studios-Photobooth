@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+JP:wght@100..900&family=Noto+Serif+JP:wght@200..900&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+      rel="stylesheet"
+    />
+    <title>Solace Studios | Photo Booth Web</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        font-family: "Noto Serif JP", serif;
+        font-optical-sizing: auto;
+        font-weight: normal;
+        font-style: normal;
+        background: #fffdf4;
+        color: #333;
+        line-height: 1.6;
+        scroll-behavior: smooth;
+      }
+
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 23px 40px;
+        z-index: 1000;
+        opacity: 0.98;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+        transition: all 0.3s ease-in-out;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .navbar ul {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 90px;
+        margin: 0;
+        padding: 0;
+        flex-grow: 1;
+        justify-content: center;
+        flex-wrap: nowrap;
+        min-width: 0;
+      }
+
+      .navbar ul li {
+        display: inline-block;
+        flex-shrink: 0;
+      }
+
+      .navbar ul li a {
+        color: #0a2b69;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 600;
+        padding: 10px 0;
+        transition:
+          color 0.3s ease,
+          transform 0.2s ease;
+        position: relative;
+        letter-spacing: 0.2px;
+        white-space: nowrap;
+      }
+
+      .navbar ul li a::after {
+        content: "";
+        position: absolute;
+        width: 0%;
+        height: 2px;
+        display: block;
+        margin-top: 5px;
+        right: 0;
+        background: #243a88;
+        transition: width 0.3s ease;
+      }
+
+      .navbar ul li a:hover::after {
+        width: 100%;
+        left: 0;
+        background: #243a88;
+      }
+
+      .navbar ul li a:hover {
+        color: #243a88;
+        transform: translateY(-2px);
+      }
+
+      .navbar ul li a.active::after {
+        width: 100%;
+        background-color: #243a88;
+      }
+
+      .main-content-wrapper {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        max-width: 1000px;
+        margin: 100px auto 20px auto;
+        padding: 20px;
+      }
+
+      .upper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+        width: 100%;
+      }
+
+      .upper img {
+        max-width: 350px;
+        height: auto;
+        filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 10px auto;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .head {
+        font-family: "Pinyon Script", cursive;
+        font-weight: 100;
+        font-style: normal;
+        font-size: 50px;
+        color: #0a2b69;
+        margin: 0;
+        line-height: 1.2;
+      }
+
+      .desc {
+        color: gray;
+        font-size: 1.1em;
+        line-height: 1.5;
+        margin-top: 10px;
+      }
+
+      .photo {
+        max-width: 900px;
+        margin: 20px auto;
+        width: 420px;
+        height: 280px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .photo img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 12px;
+      }
+
+      .button-start {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 20px auto;
+        margin-top: 15px;
+        gap: 10px;
+      }
+
+      #start-btn {
+        padding: 15px 40px;
+        width: auto;
+        height: auto;
+        cursor: pointer;
+        border-radius: 10px;
+        border: 2px solid #2369cd;
+        background-color: #2369cd;
+        font-family: "Noto Sans JP", sans-serif;
+        font-style: normal;
+        font-size: 24px;
+        color: #ffffff;
+        font-weight: 700;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        transition:
+          background-color 0.3s ease,
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      #start-btn:hover {
+        background-color: #1a5bb0;
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      #start-btn:active {
+        transform: translateY(0) scale(0.98);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .small-text {
+        margin-top: 0;
+        font-size: 0.9em;
+        color: #847e7e;
+        text-align: center;
+      }
+
+      .footer {
+        width: 100%;
+        background-color: #0a2b69;
+        color: #ffffff;
+        text-align: center;
+        padding: 20px 10px;
+        font-size: 10px;
+        border-top: 3px solid #243a88;
+        margin-top: auto;
+      }
+
+      .footer-content {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .footer a {
+        color: #ffffff;
+        text-decoration: underline;
+        margin: 0 5px;
+      }
+
+      .footer a:hover {
+        color: #ffc107;
+        text-decoration: none;
+      }
+
+      @keyframes fadeInSlideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInScale {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .animated-item {
+        opacity: 0;
+        animation-fill-mode: forwards;
+      }
+
+      .animated-item.fade-in-slide-up {
+        animation-name: fadeInSlideUp;
+        animation-duration: 1s;
+        animation-timing-function: ease-out;
+      }
+
+      .animated-item.fade-in-scale {
+        animation-name: fadeInScale;
+        animation-duration: 1s;
+        animation-timing-function: ease-out;
+      }
+
+      @media (max-width: 900px) {
+        .navbar ul {
+          gap: 40px;
+        }
+        .upper img {
+          max-width: 300px;
+        }
+        .head {
+          font-size: 40px;
+        }
+        .desc {
+          font-size: 1em;
+        }
+        .photo {
+          width: 80%;
+          height: auto;
+        }
+        #start-btn {
+          font-size: 20px;
+          padding: 12px 30px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .navbar {
+          padding: 15px 20px;
+        }
+        .navbar ul {
+          gap: 20px;
+        }
+        .navbar ul li a {
+          font-size: 14px;
+          padding: 8px 0;
+        }
+        .upper img {
+          max-width: 250px;
+        }
+        .head {
+          font-size: 35px;
+        }
+        .desc {
+          font-size: 0.95em;
+        }
+        .photo {
+          width: 90%;
+          height: auto;
+        }
+        #start-btn {
+          font-size: 18px;
+          padding: 10px 25px;
+        }
+        .small-text {
+          font-size: 0.8em;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .navbar {
+          padding: 10px 15px;
+        }
+        .navbar ul {
+          flex-direction: column;
+          gap: 8px;
+        }
+        .navbar ul li a {
+          font-size: 12px;
+          padding: 5px 0;
+        }
+        .main-content-wrapper {
+          padding: 10px;
+        }
+        .upper img {
+          max-width: 200px;
+        }
+        .head {
+          font-size: 30px;
+        }
+        .desc {
+          font-size: 0.85em;
+        }
+        .photo {
+          width: 95%;
+          height: auto;
+        }
+        #start-btn {
+          font-size: 16px;
+          padding: 8px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <ul>
+        <li><a href="index.html" class="active">HOME</a></li>
+        <li><a href="pages/faq.html">FAQ</a></li>
+        <li><a href="pages/book.html">BOOK NOW</a></li>
+      </ul>
+    </nav>
+
+    <div class="main-content-wrapper">
+      <div class="upper animated-item">
+        <img src="assets/images/FINALlabel.svg" alt="SOLACE STUDIO label" />
+      </div>
+
+      <div class="photo animated-item">
+        <img src="assets/images/homepic.svg" alt="Photobooth Sample" />
+      </div>
+
+      <div class="container animated-item">
+        <p class="head"><strong>Welcome to Solace Studios!</strong></p>
+        <p class="desc">
+          Create lasting memories with our easy-to-use online photobooth. <br />
+          Perfect for any occasion with high-quality digital copies
+        </p>
+      </div>
+
+      <div class="button-start animated-item">
+        <button id="start-btn">START</button>
+        <p class="small-text">
+          <br />Click ‘Start’ to begin your photo session
+        </p>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <p>&copy; 2025 Solace Studios. All rights reserved.</p>
+        <p>
+          <a href="mailto:solacestudios@gmail.com">Contact Us</a> |
+          <a href="pages/privpolicy.html">Privacy Policy</a>
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      const startBtn = document.getElementById("start-btn");
+
+      startBtn.addEventListener("click", () => {
+        window.location.href = "pages/photobooth.html";
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const links = document.querySelectorAll(".navbar ul li a");
+        const currentPage = window.location.pathname.split("/").pop();
+
+        links.forEach((link) => {
+          const linkPage = link.getAttribute("href");
+          if (
+            linkPage === currentPage ||
+            (linkPage === "home.html" && currentPage === "")
+          ) {
+            link.classList.add("active");
+          }
+        });
+
+        const animatedElements = document.querySelectorAll(".animated-item");
+        animatedElements.forEach((element, index) => {
+          element.style.animationDelay = `${0.2 + index * 0.3}s`;
+          element.classList.add("fade-in-slide-up");
+        });
+      });
+    </script>
+  </body>
+</html>
